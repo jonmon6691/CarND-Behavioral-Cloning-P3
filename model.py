@@ -5,6 +5,7 @@ from keras.layers import Dense, Conv2D, Dropout, Flatten, Lambda, InputLayer, Cr
 from keras.models import Sequential
 from keras.utils import Sequence, plot_model
 import numpy as np
+import cv2
 
 model = Sequential()
 
@@ -23,17 +24,25 @@ model.add(Dense(50, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(1))
 
-def data_loader(record_csv):
+def data_loader(record_csv, batch_size=32):
     import csv
-    with open(record_csv, 'rb') as f:
+    rows = list()
+    with open(record_csv, 'r') as f:
         reader = csv.reader(f)
-        # do something
+        for row in reader:
+            rows.append(row)
+
+    center_image_paths = [row[0] for row in rows if len(row) > 0]
+    left_image_paths = [row[1] for row in rows if len(row) > 1]
+    right_image_paths = [row[2] for row in rows if len(row) > 2]
+    steering_angles = [row[3] for row in rows if len(row) > 3]
+    
     while True:
-        yield (np.zeros((1, 160, 320, 3)), np.zeros((1, 1)))
+        for offset in range(0, len(rows), batch_size):
+            x = np.stack([cv2.imread(img) for img in center_image_paths[offset:offset+batch_size]])
+            y = steering_angles[offset:offset+batch_size]
+            yield (x, y)
 
 model.compile('adam', 'mse', ['accuracy'])
-model.fit_generator(data_loader(r'test.csv'), steps_per_epoch=1, epochs=1)
+model.fit_generator(data_loader(r'examples/driving_log.csv'), steps_per_epoch=1, nb_epochs=1)
 model.save(r'model.h5')
-
-print(model.summary())
-plot_model(model, show_shapes=True)
