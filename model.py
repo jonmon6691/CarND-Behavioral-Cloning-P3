@@ -8,11 +8,9 @@ import numpy as np
 import cv2
 
 model = Sequential()
-
 model.add(InputLayer(input_shape=(160, 320, 3)))
 model.add(Lambda(lambda x:x / 128 - 1))
 model.add(Cropping2D(((50, 20), (0, 0))))
-
 model.add(Conv2D(24, 5, strides=(2, 2), activation='relu'))
 model.add(Conv2D(36, 5, strides=(2, 2), activation='relu'))
 model.add(Conv2D(48, 5, strides=(2, 2), activation='relu'))
@@ -40,6 +38,7 @@ def data_loader(record_csv, batch_size=32):
     while True:
         for offset in range(0, len(rows), batch_size):
             x = np.stack([cv2.imread(img) for img in center_image_paths[offset:offset+batch_size]])
+            print(x.shape)
             y = steering_angles[offset:offset+batch_size]
             yield (x, y)
 
