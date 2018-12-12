@@ -83,11 +83,12 @@ def load_data(record_csv, validation_split):
     
     return training_set, validation_data 
 
-# Load and prepare the data for learning
-training_gen, validation_data = load_data(r'/home/workspace/data/driving_log.csv', 0.2)
-print("Training model using:\n\t%d batches,\n\t%d total training images,\n\t%d total validation images\n" % (len(training_gen), len(training_gen.center_image_paths), len(validation_data[0])))
+if __name__ == "__main__":
+    # Load and prepare the data for learning
+    training_gen, validation_data = load_data(r'/home/workspace/data/driving_log.csv', 0.2)
+    print("Training model using:\n\t%d batches,\n\t%d total training images,\n\t%d total validation images\n" % (len(training_gen), len(training_gen.center_image_paths), len(validation_data[0])))
 
-# mse optimizer used because we are trying to fit a single value, the steering angle, to the training data
-model.compile('adam', 'mse', ['accuracy'])
-model.fit_generator(training_gen, validation_data=validation_data, verbose=1, epochs=5, steps_per_epoch=len(training_gen))
-model.save(r'model.h5')
+    # mse optimizer used because we are trying to fit a single value, the steering angle, to the training data
+    model.compile('adam', 'mse', ['accuracy'])
+    model.fit_generator(training_gen, validation_data=validation_data, verbose=1, epochs=5, steps_per_epoch=len(training_gen))
+    model.save(r'model.h5')
