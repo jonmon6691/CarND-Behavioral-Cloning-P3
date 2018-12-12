@@ -44,7 +44,7 @@ The paper does not specify the activation function used. So I added RELU activat
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model did not need dropout layers in order to preform appropriately on the test track.
+The model did not need dropout layers in order to preform appropriately on the test track. And overfitting did not become a problem.
 
 #### 3. Model parameter tuning
 
