@@ -13,6 +13,7 @@ import csv
 
 # Define machine learning model to include preprocessing steps
 model = Sequential()
+activation_function = 'relu'
 # Image from vehicle
 model.add(InputLayer(input_shape=(160, 320, 3)))
 # Normalization
@@ -23,33 +24,33 @@ model.add(Cropping2D(((50, 20), (0, 0))))
 # https://arxiv.org/pdf/1604.07316v1.pdf
 model.add(Conv2D(24, 5, strides=(2, 2)))
 model.add(BatchNormalization())
-model.add(Activation("relu"))
+model.add(Activation(activation_function))
 
 model.add(Conv2D(36, 5, strides=(2, 2)))
 model.add(BatchNormalization())
-model.add(Activation("relu"))
+model.add(Activation(activation_function))
 
 model.add(Conv2D(48, 5, strides=(2, 2)))
 model.add(BatchNormalization())
-model.add(Activation("relu"))
+model.add(Activation(activation_function))
 
 model.add(Conv2D(64, 3))
 model.add(BatchNormalization())
-model.add(Activation("relu"))
+model.add(Activation(activation_function))
 
 model.add(Conv2D(64, 3))
 model.add(BatchNormalization())
-model.add(Activation("relu"))
+model.add(Activation(activation_function))
 
 model.add(Flatten())
 
-model.add(Dense(100, activation='relu'))
-#model.add(Dropout(0.5))
+model.add(Dense(100, activation=activation_function))
+model.add(Dropout(0.2))
 
-model.add(Dense(50, activation='relu'))
-#model.add(Dropout(0.5))
+model.add(Dense(50, activation=activation_function))
+model.add(Dropout(0.2))
 
-model.add(Dense(10, activation='relu'))
+model.add(Dense(10, activation=activation_function))
 model.add(Dense(1)) # Steering output
 
 def load_batch(img_paths):
@@ -73,8 +74,8 @@ class SampleImages(Sequence):
         right_x = load_batch(self.right_image_paths[i*self.batch_size : (i+1)*self.batch_size])
         x = load_batch(self.center_image_paths[i*self.batch_size : (i+1)*self.batch_size])
         y = np.array(self.steering_angles[i*self.batch_size : (i+1)*self.batch_size])
-        left_y = y + 0.5
-        right_y = y - 0.5
+        left_y = y + 0.35
+        right_y = y - 0.35
         return ( np.concatenate((x, left_x, right_x)), np.concatenate((y, left_y, right_y)) )
     
     def on_epoch_end(self):
