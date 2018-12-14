@@ -1,0 +1,43 @@
+Michael Maile
+Andrei Vatavu
+Dominik Nuss
+
+/home/workspace/data/IMG/center_2018_12_11_01_16_32_812.jpg,/home/workspace/data/IMG/left_2018_12_11_01_16_32_812.jpg,/home/workspace/data/IMG/right_2018_12_11_01_16_32_812.jpg,-0.9433962,0,0,27.13769
+
+/home/workspace/data/IMG/center_2018_12_11_01_24_41_065.jpg,/home/workspace/data/IMG/left_2018_12_11_01_24_41_065.jpg,/home/workspace/data/IMG/right_2018_12_11_01_24_41_065.jpg,-0.6698113,1,0,30.15636
+
+vid_try1:
+    * batch norm
+    * no dropout
+    * data augmentation (+- 0.25)
+
+
+vid_try2:
+    * batch norm
+    * only 1 dropout layer between 100 and 50 neuron FC layers 0.5kr
+    * data augmentation (+- 0.25)
+
+vid_try3:
+    * batch norm
+    * no dropout
+    * more aggresive data augmentation (+- 0.5)
+
+vid_try4:
+    * batch norm
+    * only 1 dropout layer between 100 and 50 neuron FC layers 0.5kr
+    * more aggresive data augmentation (+- 0.5)
+
+vid_try5:
+    * batch norm
+    * only 1 dropout layer between 100 and 50 neuron FC layers 0.2kr
+    * more aggresive data augmentation (+- 0.5)
+
+vid_try6:
+    * batch norm
+    * only 2 dropout layers between 100 and 50 and 10 neuron FC layers 0.2kr
+    * more aggresive data augmentation (+- 0.5)
+
+vid_try6:
+    * batch norm
+    * only 2 dropout layers between 100 and 50 and 10 neuron FC layers 0.2kr
+    * less aggresive data augmentation (+- 0.35)

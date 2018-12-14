@@ -73,7 +73,7 @@ Will run the video at 48 FPS. The default FPS is 60.
 
 The overall strategy for deriving a model architecture was to transform the vehicle state at an instant in time into a steering angle for that instant. The vehicle state is captured as a 2D color image taken from a camera placed on the vehicle center looking forward. When working with image data as an input, a convolutional neural network is a good choice. CNN's are robust against translational variation and other aspects of image data and are good for extracting high-level features like lane lines. Model architecture is an inexact science and there are near infinite CNN architectures that would solve the problem presented in this project. In the face of that indeterminance, I chose to start with an architecture designed for the purpose of vehicle control. The NVIDIA vehicle control CNN turned out to be more than sufficient for the job.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. My model performed perfectly literally the first time that I tried it. I did not need to collect more training data, or adjust any hyper-parameters. I was completely shocked and spent 10 minutes making sure I wasn't just playing back the training data or something.
+In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. 20% center driving training images were reserved for validation and the rest were used for training. From that training set, additional training data was generated using the left and right offset camera images.
 
 #### 2. Final Model Architecture
 
@@ -89,7 +89,7 @@ To capture good driving behavior, I first recorded three laps on track one using
 
 I then recorded the vehicle going around the track three times in the reverse direction.
 
-After training with that data, my model was preforming perfectly on track one and I did not need to do any data augmentation like reversing or collecting recovery driving data.
+After training with that data, the batching function injects images from the left and right offset cameras and steering values shifted by 0.35 to the corresponding direction. This helps the model learn to steer away from the edges by faking corrective-action data.
 
 After the collection process, I had about 20k data points. I then preprocessed this data by converting to RGB, normalizing to [-1,1] and cropping the top and bottom off.
 
