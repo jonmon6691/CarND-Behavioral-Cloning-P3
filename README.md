@@ -2,6 +2,8 @@
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
+![](./cover.PNG)
+
 Overview
 ---
 This repository contains files for the Behavioral Cloning Project.
@@ -29,7 +31,6 @@ The goals / steps of this project are the following:
 
 ## Details About Files In This Directory
 
-### `drive.py`
 
 The model can be used with drive.py using this command:
 
@@ -49,25 +50,8 @@ python drive.py model.h5 run1
 
 The fourth argument, `run1`, is the directory in which to save the images seen by the agent. If the directory already exists, it'll be overwritten.
 
-```sh
-ls run1
-
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_424.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_451.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_477.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_528.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_573.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_618.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_697.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_723.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_749.jpg
-[2017-01-09 16:10:23 EST]  12KiB 2017_01_09_21_10_23_817.jpg
-...
-```
 
 The image file name is a timestamp of when the image was seen. This information is used by `video.py` to create a chronological video of the agent driving.
-
-### `video.py`
 
 ```sh
 python video.py run1
@@ -83,3 +67,33 @@ python video.py run1 --fps 48
 
 Will run the video at 48 FPS. The default FPS is 60.
 
+# Model Architecture and Training Strategy
+
+#### 1. Solution Design Approach
+
+The overall strategy for deriving a model architecture was to transform the vehicle state at an instant in time into a steering angle for that instant. The vehicle state is captured as a 2D color image taken from a camera placed on the vehicle center looking forward. When working with image data as an input, a convolutional neural network is a good choice. CNN's are robust against translational variation and other aspects of image data and are good for extracting high-level features like lane lines. Model architecture is an inexact science and there are near infinite CNN architectures that would solve the problem presented in this project. In the face of that indeterminance, I chose to start with an architecture designed for the purpose of vehicle control. The NVIDIA vehicle control CNN turned out to be more than sufficient for the job.
+
+In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. My model performed perfectly literally the first time that I tried it. I did not need to collect more training data, or adjust any hyper-parameters. I was completely shocked and spent 10 minutes making sure I wasn't just playing back the training data or something.
+
+#### 2. Final Model Architecture
+
+The final model architecture (model.py lines 15-33) consisted of a convolution neural network with the following layers and layer sizes :
+
+![](model.png)
+
+#### 3. Creation of the Training Set & Training Process
+
+To capture good driving behavior, I first recorded three laps on track one using center lane driving. Here is an example image of center lane driving:
+
+![](examples\input_example.jpg)
+
+I then recorded the vehicle going around the track three times in the reverse direction.
+
+After training with that data, my model was preforming perfectly on track one and I did not need to do any data augmentation like reversing or collecting recovery driving data.
+
+After the collection process, I had about 20k data points. I then preprocessed this data by converting to RGB, normalizing to [-1,1] and cropping the top and bottom off.
+
+
+I finally randomly shuffled the data set and put 20% of the data into a validation set. I used the fit_generator() method and wrote a class that implemented the Sequence interface provided by Keras. This means that during training, only the images being used in the current batch need to be loaded into memory.
+
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by the test performance on the test track. I used an adam optimizer so that manually training the learning rate wasn't necessary.
