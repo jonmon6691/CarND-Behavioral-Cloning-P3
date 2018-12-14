@@ -38,8 +38,10 @@ def load_batch(img_paths):
 
 class SampleImages(Sequence):
     # Batching class used by model.fit_generator(), it loads the training images in batches
-    def __init__(self, center_image_paths, steering_angles, batch_size):
+    def __init__(self, center_image_paths, left_image_paths, right_image_paths, steering_angles, batch_size):
         self.center_image_paths = center_image_paths
+        self.left_image_paths = left_image_paths
+        self.right_image_paths = right_image_paths
         self.steering_angles = steering_angles
         self.batch_size = batch_size
         
@@ -47,9 +49,13 @@ class SampleImages(Sequence):
         return ceil(len(self.center_image_paths) / self.batch_size)
     
     def __getitem__(self, i):
+        left_x = load_batch(self.left_image_paths[i*self.batch_size : (i+1)*self.batch_size])
+        right_x = load_batch(self.right_image_paths[i*self.batch_size : (i+1)*self.batch_size])
         x = load_batch(self.center_image_paths[i*self.batch_size : (i+1)*self.batch_size])
         y = self.steering_angles[i*self.batch_size : (i+1)*self.batch_size]
-        return (x, y)
+        left_y = y + 0.25
+        right_y = y - 0.25
+        return (np.stack(x, left_x, right_x), np.stack(y, left_y, right_y))
     
     def on_epoch_end(self):
         # Shuffle the data between epochs
@@ -68,6 +74,8 @@ def load_data(record_csv, validation_split):
     
     # Separate the CSV rows
     center_image_paths = [row[0] for row in rows]
+    left_image_paths = [row[1] for row in rows]
+    right_image_paths = [row[2] for row in rows]
     steering_angles = [row[3] for row in rows]
     
     # Cut the deck according to the validation split 
@@ -75,6 +83,8 @@ def load_data(record_csv, validation_split):
 
     # Use part to feed the training batch generator
     training_set = SampleImages(center_image_paths[cutoff:],
+                                left_image_paths[cutoff:],
+                                right_image_paths[cutoff:],
                                 steering_angles[cutoff:],
                                 batch_size = 32)
 
